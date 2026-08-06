@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedReservationsRouteImport } from './routes/_authenticated/reservations'
+import { Route as VenuePlaceIdRouteImport } from './routes/venue.$placeId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,16 +35,23 @@ const AuthenticatedReservationsRoute =
     path: '/reservations',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const VenuePlaceIdRoute = VenuePlaceIdRouteImport.update({
+  id: '/venue/$placeId',
+  path: '/venue/$placeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reservations': typeof AuthenticatedReservationsRoute
+  '/venue/$placeId': typeof VenuePlaceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/reservations': typeof AuthenticatedReservationsRoute
+  '/venue/$placeId': typeof VenuePlaceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -51,24 +59,27 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/reservations': typeof AuthenticatedReservationsRoute
+  '/venue/$placeId': typeof VenuePlaceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/reservations'
+  fullPaths: '/' | '/auth' | '/reservations' | '/venue/$placeId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/reservations'
+  to: '/' | '/auth' | '/reservations' | '/venue/$placeId'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/reservations'
+    | '/venue/$placeId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  VenuePlaceIdRoute: typeof VenuePlaceIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -101,6 +112,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReservationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/venue/$placeId': {
+      id: '/venue/$placeId'
+      path: '/venue/$placeId'
+      fullPath: '/venue/$placeId'
+      preLoaderRoute: typeof VenuePlaceIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -119,6 +137,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  VenuePlaceIdRoute: VenuePlaceIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
