@@ -10,7 +10,7 @@ export type Venue = {
   category: string | null;
   openNow: boolean | null;
   photoName: string | null;
-  distanceKm?: number;
+  distanceKm?: number | undefined;
 };
 
 export type VenueDetail = Venue & {
