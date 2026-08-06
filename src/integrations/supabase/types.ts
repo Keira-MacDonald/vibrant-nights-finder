@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      reservations: {
+        Row: {
+          created_at: string
+          guest_name: string
+          id: string
+          kind: Database["public"]["Enums"]["reservation_kind"]
+          notes: string | null
+          party_size: number
+          phone: string | null
+          place_id: string
+          reserved_for: string
+          status: string
+          updated_at: string
+          user_id: string
+          venue_address: string | null
+          venue_name: string
+        }
+        Insert: {
+          created_at?: string
+          guest_name: string
+          id?: string
+          kind?: Database["public"]["Enums"]["reservation_kind"]
+          notes?: string | null
+          party_size?: number
+          phone?: string | null
+          place_id: string
+          reserved_for: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          venue_address?: string | null
+          venue_name: string
+        }
+        Update: {
+          created_at?: string
+          guest_name?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["reservation_kind"]
+          notes?: string | null
+          party_size?: number
+          phone?: string | null
+          place_id?: string
+          reserved_for?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          venue_address?: string | null
+          venue_name?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +73,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      reservation_kind: "booth" | "table" | "door"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +200,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      reservation_kind: ["booth", "table", "door"],
+    },
   },
 } as const
