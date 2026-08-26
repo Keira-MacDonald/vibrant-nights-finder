@@ -89,6 +89,7 @@ function ReservationsPage() {
                     <h2 className="text-lg font-semibold">{row.venue_name}</h2>
                     <Badge variant="secondary">{kind?.label ?? row.kind}</Badge>
                     {cancelled && <Badge variant="outline">Cancelled</Badge>}
+                    {row.checked_in_at && <Badge>Checked in</Badge>}
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">{row.venue_address}</p>
                   <p className="mt-2 text-sm">
@@ -104,9 +105,18 @@ function ReservationsPage() {
                     })}{" "}
                     · party of {row.party_size} · {row.guest_name}
                   </p>
+                  {row.confirmation_code && !cancelled && (
+                    <p className="mt-2 text-sm">
+                      <span className="text-eyebrow">Check-in code</span>{" "}
+                      <span className="font-display text-lg tracking-[0.3em] text-primary">
+                        {row.confirmation_code}
+                      </span>
+                    </p>
+                  )}
                   {row.notes && (
                     <p className="mt-2 text-sm text-muted-foreground">“{row.notes}”</p>
                   )}
+
                 </div>
                 <div className="flex gap-2">
                   <Button asChild variant="outline" size="sm">
