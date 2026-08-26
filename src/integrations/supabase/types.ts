@@ -10,13 +10,64 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
+      notifications: {
+        Row: {
+          body: string
+          created_at: string
+          email_status: string
+          email_to: string | null
+          id: string
+          kind: string
+          read_at: string | null
+          reservation_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          email_status?: string
+          email_to?: string | null
+          id?: string
+          kind: string
+          read_at?: string | null
+          reservation_id?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          email_status?: string
+          email_to?: string | null
+          id?: string
+          kind?: string
+          read_at?: string | null
+          reservation_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_reservation_id_fkey"
+            columns: ["reservation_id"]
+            isOneToOne: false
+            referencedRelation: "reservations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reservations: {
         Row: {
+          checked_in_at: string | null
+          confirmation_code: string | null
+          contact_email: string | null
           created_at: string
+          event_id: string | null
           guest_name: string
           id: string
           kind: Database["public"]["Enums"]["reservation_kind"]
@@ -32,7 +83,11 @@ export type Database = {
           venue_name: string
         }
         Insert: {
+          checked_in_at?: string | null
+          confirmation_code?: string | null
+          contact_email?: string | null
           created_at?: string
+          event_id?: string | null
           guest_name: string
           id?: string
           kind?: Database["public"]["Enums"]["reservation_kind"]
@@ -48,7 +103,11 @@ export type Database = {
           venue_name: string
         }
         Update: {
+          checked_in_at?: string | null
+          confirmation_code?: string | null
+          contact_email?: string | null
           created_at?: string
+          event_id?: string | null
           guest_name?: string
           id?: string
           kind?: Database["public"]["Enums"]["reservation_kind"]
@@ -63,6 +122,140 @@ export type Database = {
           venue_address?: string | null
           venue_name?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "reservations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "venue_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      venue_availability: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          kind: Database["public"]["Enums"]["reservation_kind"]
+          place_id: string
+          service_date: string
+          total_capacity: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          kind: Database["public"]["Enums"]["reservation_kind"]
+          place_id: string
+          service_date: string
+          total_capacity?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["reservation_kind"]
+          place_id?: string
+          service_date?: string
+          total_capacity?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      venue_events: {
+        Row: {
+          cover_charge: number | null
+          created_at: string
+          created_by: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          is_published: boolean
+          lineup: string | null
+          place_id: string
+          starts_at: string
+          title: string
+          updated_at: string
+          venue_name: string
+        }
+        Insert: {
+          cover_charge?: number | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_published?: boolean
+          lineup?: string | null
+          place_id: string
+          starts_at: string
+          title: string
+          updated_at?: string
+          venue_name: string
+        }
+        Update: {
+          cover_charge?: number | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          is_published?: boolean
+          lineup?: string | null
+          place_id?: string
+          starts_at?: string
+          title?: string
+          updated_at?: string
+          venue_name?: string
+        }
+        Relationships: []
+      }
+      venue_managers: {
+        Row: {
+          created_at: string
+          id: string
+          place_id: string
+          user_id: string
+          venue_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          place_id: string
+          user_id: string
+          venue_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          place_id?: string
+          user_id?: string
+          venue_name?: string
+        }
         Relationships: []
       }
     }
@@ -70,9 +263,29 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      manages_venue: {
+        Args: { _place_id: string; _user_id: string }
+        Returns: boolean
+      }
+      venue_availability_status: {
+        Args: { _place_id: string; _service_date: string }
+        Returns: {
+          booked: number
+          kind: Database["public"]["Enums"]["reservation_kind"]
+          remaining: number
+          total_capacity: number
+        }[]
+      }
     }
     Enums: {
+      app_role: "admin" | "venue_manager"
       reservation_kind: "booth" | "table" | "door"
     }
     CompositeTypes: {
@@ -201,6 +414,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "venue_manager"],
       reservation_kind: ["booth", "table", "door"],
     },
   },
